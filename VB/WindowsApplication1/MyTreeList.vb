@@ -1,5 +1,4 @@
-Imports Microsoft.VisualBasic
-Imports System
+﻿Imports System
 Imports System.Drawing
 Imports System.Windows.Forms
 Imports DevExpress.XtraTreeList
@@ -10,93 +9,95 @@ Imports DevExpress.XtraTreeList.Nodes.Operations
 Imports DevExpress.Utils
 
 Namespace WindowsApplication1
-	<System.ComponentModel.DesignerCategory("")> _
-	Public Class MyTreeList
-		Inherits TreeList
-		Private indexPaintAppearance As New AppearanceObject()
-		Private _Helper As IndexesHelper
-		Public Property Helper() As IndexesHelper
-			Get
-				If _Helper Is Nothing Then
-					_Helper = New IndexesHelper(Me)
-				End If
-				Return _Helper
-			End Get
-			Set(ByVal value As IndexesHelper)
-				_Helper = value
-			End Set
-		End Property
-		Public Sub New()
-			indexPaintAppearance.ForeColor = Color.DarkBlue
-			indexPaintAppearance.Font = New Font(AppearanceObject.DefaultFont.FontFamily, 6, FontStyle.Bold)
-			indexPaintAppearance.TextOptions.HAlignment = HorzAlignment.Far
-			indexPaintAppearance.TextOptions.VAlignment = VertAlignment.Center
-		End Sub
+    <System.ComponentModel.DesignerCategory("")> _
+    Public Class MyTreeList
+        Inherits TreeList
 
-		Protected Sub New(ByVal ignore As Object)
-			MyBase.New(ignore)
+        Private indexPaintAppearance As New AppearanceObject()
+        Private _Helper As IndexesHelper
+        Public Property Helper() As IndexesHelper
+            Get
+                If _Helper Is Nothing Then
+                    _Helper = New IndexesHelper(Me)
+                End If
+                Return _Helper
+            End Get
+            Set(ByVal value As IndexesHelper)
+                _Helper = value
+            End Set
+        End Property
+        Public Sub New()
+            indexPaintAppearance.ForeColor = Color.DarkBlue
+            indexPaintAppearance.Font = New Font(AppearanceObject.DefaultFont.FontFamily, 6, FontStyle.Bold)
+            indexPaintAppearance.TextOptions.HAlignment = HorzAlignment.Far
+            indexPaintAppearance.TextOptions.VAlignment = VertAlignment.Center
+        End Sub
 
-		End Sub
+        Protected Sub New(ByVal ignore As Object)
+            MyBase.New(ignore)
 
-
-
-
-		Protected Overrides Sub OnPaint(ByVal e As PaintEventArgs)
-			MyBase.OnPaint(e)
-			For Each rowInfo As RowInfo In ViewInfo.RowsInfo.Rows
-				Dim bounds As Rectangle = rowInfo.Bounds
-				bounds.Width = 14
-				indexPaintAppearance.DrawString(New DevExpress.Utils.Drawing.GraphicsCache(e.Graphics), Helper.GetIndexByNode(rowInfo.Node).ToString(), bounds)
-			Next rowInfo
-		End Sub
-		Protected Overrides Sub RaiseCustomDrawNodeIndicator(ByVal e As CustomDrawNodeIndicatorEventArgs)
-			MyBase.RaiseCustomDrawNodeIndicator(e)
-			e.ImageIndex = -1
-		End Sub
-
-		Public Overrides Sub LayoutChanged()
-			MyBase.LayoutChanged()
-			If IsInitialized Then
-				Helper.RefreshIndexesHash()
-			End If
-		End Sub
+        End Sub
 
 
-	End Class
 
-	Public Class IndexesHelper
 
-		Public Sub New(ByVal treeList As TreeList)
-			_TreeList = treeList
-			RefreshIndexesHash()
-		End Sub
+        Protected Overrides Sub OnPaint(ByVal e As PaintEventArgs)
+            MyBase.OnPaint(e)
+            For Each rowInfo As RowInfo In ViewInfo.RowsInfo.Rows
+                Dim bounds As Rectangle = rowInfo.Bounds
+                bounds.Width = 14
+                indexPaintAppearance.DrawString(New DevExpress.Utils.Drawing.GraphicsCache(e.Graphics), Helper.GetIndexByNode(rowInfo.Node).ToString(), bounds)
+            Next rowInfo
+        End Sub
+        Protected Overrides Sub RaiseCustomDrawNodeIndicator(ByVal e As CustomDrawNodeIndicatorEventArgs)
+            MyBase.RaiseCustomDrawNodeIndicator(e)
+            e.ImageIndex = -1
+        End Sub
 
-		Private indexesHash As New Hashtable()
-		Private ReadOnly _TreeList As TreeList
+        Public Overrides Sub LayoutChanged()
+            MyBase.LayoutChanged()
+            If IsInitialized Then
+                Helper.RefreshIndexesHash()
+            End If
+        End Sub
 
-		Public Function GetIndexByNode(ByVal node As TreeListNode) As Integer
-			If (Not indexesHash.ContainsKey(node.Id)) Then
-				RefreshIndexesHash()
-			End If
-			Return CInt(Fix(indexesHash(node.Id)))
-		End Function
-		Public Sub RefreshIndexesHash()
-			indexesHash.Clear()
-			_TreeList.NodesIterator.DoLocalOperation(New NodesIndexesHelperOperation(indexesHash), _TreeList.Nodes)
-		End Sub
-	End Class
 
-	Public Class NodesIndexesHelperOperation
-		Inherits TreeListOperation
-		Private i As Integer = 0
-		Private ReadOnly _Hash As Hashtable
-		Public Sub New(ByVal hash As Hashtable)
-			_Hash = hash
-		End Sub
+    End Class
 
-		Public Overrides Sub Execute(ByVal node As TreeListNode)
-			i += 1
-			_Hash.Add(node.Id, i)
-		End Sub
-	End Class
+    Public Class IndexesHelper
+
+        Public Sub New(ByVal treeList As TreeList)
+            _TreeList = treeList
+            RefreshIndexesHash()
+        End Sub
+
+        Private indexesHash As New Hashtable()
+        Private ReadOnly _TreeList As TreeList
+
+        Public Function GetIndexByNode(ByVal node As TreeListNode) As Integer
+            If Not indexesHash.ContainsKey(node.Id) Then
+                RefreshIndexesHash()
+            End If
+            Return DirectCast(indexesHash(node.Id), Integer)
+        End Function
+        Public Sub RefreshIndexesHash()
+            indexesHash.Clear()
+            _TreeList.NodesIterator.DoLocalOperation(New NodesIndexesHelperOperation(indexesHash), _TreeList.Nodes)
+        End Sub
+    End Class
+
+    Public Class NodesIndexesHelperOperation
+        Inherits TreeListOperation
+
+        Private i As Integer = 0
+        Private ReadOnly _Hash As Hashtable
+        Public Sub New(ByVal hash As Hashtable)
+            _Hash = hash
+        End Sub
+
+        Public Overrides Sub Execute(ByVal node As TreeListNode)
+            i += 1
+            _Hash.Add(node.Id, i)
+        End Sub
+    End Class
 End Namespace
