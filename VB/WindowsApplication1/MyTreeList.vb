@@ -31,23 +31,20 @@ Namespace WindowsApplication1
             indexPaintAppearance.Font = New Font(AppearanceObject.DefaultFont.FontFamily, 6, FontStyle.Bold)
             indexPaintAppearance.TextOptions.HAlignment = HorzAlignment.Far
             indexPaintAppearance.TextOptions.VAlignment = VertAlignment.Center
+            AddHandler PaintEx, AddressOf MyTreeList_PaintEx
+        End Sub
+
+        Private Sub MyTreeList_PaintEx(ByVal sender As Object, ByVal e As TreeListPaintEventArgs)
+            For Each rowInfo As RowInfo In ViewInfo.RowsInfo.Rows
+                Dim bounds As Rectangle = rowInfo.Bounds
+                bounds.Width = 14
+                e.Cache.DrawString(Helper.GetIndexByNode(rowInfo.Node).ToString(), indexPaintAppearance.Font, indexPaintAppearance.ForeColor, bounds, indexPaintAppearance.GetStringFormat())
+            Next rowInfo
         End Sub
 
         Protected Sub New(ByVal ignore As Object)
             MyBase.New(ignore)
 
-        End Sub
-
-
-
-
-        Protected Overrides Sub OnPaint(ByVal e As PaintEventArgs)
-            MyBase.OnPaint(e)
-            For Each rowInfo As RowInfo In ViewInfo.RowsInfo.Rows
-                Dim bounds As Rectangle = rowInfo.Bounds
-                bounds.Width = 14
-                indexPaintAppearance.DrawString(New DevExpress.Utils.Drawing.GraphicsCache(e.Graphics), Helper.GetIndexByNode(rowInfo.Node).ToString(), bounds)
-            Next rowInfo
         End Sub
         Protected Overrides Sub RaiseCustomDrawNodeIndicator(ByVal e As CustomDrawNodeIndicatorEventArgs)
             MyBase.RaiseCustomDrawNodeIndicator(e)
@@ -60,8 +57,6 @@ Namespace WindowsApplication1
                 Helper.RefreshIndexesHash()
             End If
         End Sub
-
-
     End Class
 
     Public Class IndexesHelper
