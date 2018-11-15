@@ -1,3 +1,10 @@
+<!-- default file list -->
+*Files to look at*:
+
+* [Form1.cs](./CS/WindowsApplication1/Form1.cs) (VB: [Form1.vb](./VB/WindowsApplication1/Form1.vb))
+* [MyTreeList.cs](./CS/WindowsApplication1/MyTreeList.cs) (VB: [MyTreeList.vb](./VB/WindowsApplication1/MyTreeList.vb))
+* [Program.cs](./CS/WindowsApplication1/Program.cs) (VB: [Program.vb](./VB/WindowsApplication1/Program.vb))
+<!-- default file list end -->
 # How to show a node index at the left side taking into account collapsed nodes?
 
 
